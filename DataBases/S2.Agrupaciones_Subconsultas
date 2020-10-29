@@ -1,0 +1,125 @@
+# '%' comodín de 0 a n caracteres, '_' comodín de 1 caracter
+# SUM(), COUNT(), MIN(), MAX(), AVG()
+# GROUP_BY() 
+
+
+
+
+
+############### EJEMPLO 1 (Búsqueda de patrones con LIKE) #################
+SELECT * FROM empleado WHERE nombre LIKE 'M%';
+SELECT * FROM empleado WHERE nombre LIKE '%a';
+SELECT * FROM empleado WHERE nombre LIKE 'M%a';
+SELECT * FROM empleado WHERE nombre LIKE 'M_losa';
+
+############### EJEMPLO 2 (Funciones de agrupamiento) #################
+SELECT (1 + 7) * (10 / (6 - 4));
+SELECT * FROM articulo;
+SELECT AVG(precio) AS promedio_precio FROM articulo;
+SELECT COUNT(*) AS conteo_articulos FROM articulo;
+SELECT MAX(precio) AS precio_maximo FROM articulo;
+SELECT MIN(precio) AS precio_minimo FROM articulo;
+SELECT SUM(precio) AS precio_suma FROM articulo;
+
+############### EJEMPLO 3 (Agrupamientos) #################
+SELECT nombre, SUM(precio) FROM articulo GROUP BY nombre;
+SELECT nombre, COUNT(*) AS cantidad FROM articulo GROUP BY nombre ORDER BY cantidad DESC;
+SELECT nombre, MIN(salario) AS salario_minimo, MAX(salario) AS salario_maximo FROM puesto GROUP BY nombre;
+
+
+
+
+
+################# RETO 1 ###################
+# 1)¿Qué artículos incluyen la palabra Pasta en su nombre?
+SELECT * FROM articulo WHERE nombre LIKE '%Pasta%';
+
+# 2)¿Qué artículos incluyen la palabra Cannelloni en su nombre?
+SELECT * FROM articulo WHERE nombre LIKE '%Cannelloni%';
+
+# 3)¿Qué nombres están separados por un guión (-) por ejemplo Puree - Kiwi?
+SELECT * FROM articulo WHERE nombre LIKE '%-%';
+
+# 4)¿Qué puestos incluyen la palabra Designer?
+SELECT * FROM puesto WHERE nombre LIKE '%Designer%';
+
+# 5)¿Qué puestos incluyen la palabra Developer?
+SELECT * FROM puesto WHERE nombre LIKE '%Developer%';
+
+################# RETO 2 ###################
+# 1)¿Cuál es el promedio de salario de los puestos?
+SELECT AVG(salario) FROM puesto;
+
+# 2)¿Cuántos artículos incluyen la palabra Pasta en su nombre?
+SELECT COUNT(*) FROM articulo WHERE nombre LIKE '%Pasta%';
+
+# 3)¿Cuál es el salario mínimo y máximo?
+SELECT MIN(salario), MAX(salario) FROM puesto;
+
+# 4)¿Cuál es la suma del salario de los últimos cinco puestos agregados?
+SELECT SUM(salario) FROM puesto WHERE id_puesto > ((SELECT MAX(id_puesto)) - 5);
+
+################# RETO 3 ###################
+#1) ¿Cuántos registros hay por cada uno de los puestos?
+SELECT nombre, COUNT(*) AS conteo_puesto FROM puesto GROUP BY nombre;
+
+#2) ¿Cuánto dinero se paga en total por puesto?
+SELECT nombre, SUM(salario) AS suma_salarios FROM puesto GROUP BY nombre;
+
+#3) ¿Cuál es el número total de ventas por vendedor?
+SELECT id_empleado, COUNT(*) AS numero_ventas FROM venta GROUP BY id_empleado ORDER BY numero_ventas DESC;
+
+#4) ¿Cuál es el número total de ventas por artículo?
+SELECT id_articulo, COUNT(*) AS ventasXarticulo FROM venta GROUP BY id_articulo ORDER BY ventasXarticulo DESC;
+
+
+
+
+
+################# EJERCICIOS ###################
+#1) Dentro de la tabla employees, obten el número de empleado, apellido y nombre de todos los empleados cuyo nombre empiece con a.
+SELECT id_empleado, apellido_paterno, nombre FROM empleado WHERE nombre LIKE 'A%';
+
+#2) Dentro de la tabla employees, obten el número de empleado, apellido y nombre de todos los empleados cuyo nombre termina con on.
+SELECT id_empleado, apellido_paterno, nombre FROM empleado WHERE nombre LIKE '%on';
+
+#3) Dentro de la tabla employees, obten el número de empleado, apellido y nombre de todos los empleados cuyo nombre incluye la cadena on.
+SELECT id_empleado, apellido_paterno, nombre FROM empleado WHERE nombre LIKE '%on%';
+
+#4) Dentro de la tabla employees, obten el número de empleado, apellido y nombre de todos los empleados cuyos nombres tienen tres letras e inician con T y finalizan con m.
+SELECT id_empleado, apellido_paterno, nombre FROM empleado WHERE nombre LIKE 'T_m'; #Sin resultados
+
+#5) Dentro de la tabla employees, obten el número de empleado, apellido y nombre de todos los empleados cuyo nombre no inicia con B.
+SELECT id_empleado, apellido_paterno, nombre FROM empleado WHERE nombre NOT LIKE 'B%';
+
+#6) Dentro de la tabla products, obten el código de producto y nombre de los productos cuyo código incluye la cadena _20.
+SELECT id_articulo, nombre FROM articulo WHERE id_articulo LIKE '_20';
+
+#7) Dentro de la tabla orderdetails, obten el total de cada orden.
+#No entendí :(
+
+#8) Dentro de la tabla orders obten el número de órdenes por año.
+SELECT SUBSTRING(fecha, 1, 4) AS año , COUNT(*) AS num_ordenes FROM venta GROUP BY año;
+
+#9) Obten el apellido y nombre de los empleados cuya oficina está ubicada en USA.
+#Datos no encontrados
+
+#10) Obten el número de cliente, número de cheque y cantidad del cliente que ha realizado el pago más alto.
+#Sustituido por: id_articulo, nombre y precio por el articulo con el precio más alto
+SELECT id_articulo, nombre, precio FROM articulo ORDER BY precio DESC LIMIT 1;
+
+#11) Obten el número de cliente, número de cheque y cantidad de aquellos clientes cuyo pago es más alto que el promedio.
+#Sustituido por: id_articulo, nombre, precio de aquellos articulos mas caros que el promedio
+SELECT AVG(precio) FROM articulo; #3512.73
+SELECT id_articulo, nombre, precio FROM articulo WHERE precio > 3512.73 ORDER BY precio DESC;
+
+#12) Obten el nombre de aquellos clientes que no han hecho ninguna orden.
+#Datos no encontrados
+
+#13) Obten el máximo, mínimo y promedio del número de productos en las órdenes de venta.
+#Sustituido por: max, min, promedio de los precios de articulos con el mismo nombre
+SELECT nombre, MAX(precio), MIN(precio), AVG(precio) FROM articulo GROUP BY nombre;
+
+#14) Dentro de la tabla orders, obten el número de órdenes que hay por cada estado.
+#Sustituido por: Dentro de la tabla empleado, obten el número de empleados que hay por año de nacimiento (5 y 6 dígito de RFC)
+SELECT SUBSTRING(rfc, 5, 2) AS año, COUNT(*) as num_empleados FROM empleado GROUP BY año ORDER BY año;
