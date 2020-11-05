@@ -1,0 +1,218 @@
+USE tienda;
+
+############### EJEMPLO 1 (Subconsultas)#################
+### WHERE + >
+#¿Cuál es la suma del salario de los últimos cinco puestos agregados?
+SELECT max(id_puesto) - 5 FROM puesto;
+SELECT sum(salario) FROM puesto WHERE id_puesto > 995;
+
+SELECT sum(salario) FROM puesto WHERE id_puesto > (SELECT max(id_puesto) - 5 FROM puesto);
+
+### WHERE in
+#Queremos los empleados cuyo puesto es Junior Executive
+
+SELECT id_puesto FROM puesto WHERE nombre = 'Junior Executive';
+
+SELECT * FROM empleado WHERE id_puesto in (SELECT id_puesto FROM puesto WHERE nombre = 'Junior Executive');
+
+### FROM 
+#Menor y mayor cantidad de ventas de un artículo.
+
+SELECT clave, id_articulo, count(*) AS cantidad FROM venta GROUP BY clave, id_articulo ORDER BY clave;
+
+SELECT id_articulo, min(cantidad), max(cantidad) 
+FROM (SELECT clave, id_articulo, count(*) AS cantidad FROM venta GROUP BY clave, id_articulo ORDER BY clave) 
+AS subconsulta GROUP BY id_articulo;
+
+
+############### EJEMPLO 2 (JOINS) #################
+### JOIN/INNER JOIN
+# Regresa todos los registros de múltiples tablas donde se cumplan la condición del join
+SELECT * FROM empleado AS e JOIN puesto AS p ON e.id_puesto = p.id_puesto;
+
+### LEFT JOIN / LEFT OUTER JOIN
+# Regresa todos los registros de la tabla izquierda que se está relacionando y únicamente aquellos que cumplen con la condición de relación de la tabla derecha.
+SELECT * FROM puesto AS p LEFT JOIN empleado AS e ON p.id_puesto = e.id_puesto;
+
+### RIGHT JOIN / RIGHT OUTER JOIN
+# Regresa todos los registros de la tabla derecha que se está relacionando y únicamente aquellos que cumplen con la condición de relación de la tabla izquierda.
+SELECT * FROM empleado AS e RIGHT JOIN puesto AS p ON e.id_puesto = p.id_puesto;
+
+
+############### EJEMPLO 3 (Vistas) #################
+SELECT v.clave, v.fecha, a.nombre AS producto, a.precio, concat(e.nombre, ' ', e.apellido_paterno) AS empleado
+FROM venta AS v JOIN empleado AS e
+ON v.id_empleado = e.id_empleado
+JOIN articulo AS a
+ON v.id_articulo = a.id_articulo; 
+
+CREATE VIEW tickets151 AS
+SELECT v.clave, v.fecha, a.nombre AS producto, a.precio, concat(e.nombre, ' ', e.apellido_paterno) AS empleado
+FROM venta AS v JOIN empleado AS e
+ON v.id_empleado = e.id_empleado
+JOIN articulo AS a
+ON v.id_articulo = a.id_articulo;
+
+
+
+
+
+############### RETO 1 #################
+#¿Cuál es el nombre de los empleados cuyo sueldo es menor a $10,000?
+SELECT nombre, apellido_paterno FROM empleado WHERE id_puesto IN (SELECT id_puesto FROM puesto WHERE salario > 10000);
+
+#¿Cuál es la cantidad mínima y máxima de ventas de cada empleado?
+SELECT id_empleado, min(total_ventas), max(total_ventas) FROM (SELECT clave, id_empleado, count(*) total_ventas FROM venta GROUP BY clave, id_empleado) AS sq GROUP BY id_empleado;
+
+#¿Cuáles claves de venta incluyen artículos cuyos precios son mayores a $5,000?
+SELECT clave, id_articulo FROM venta WHERE id_articulo IN (SELECT id_articulo FROM articulo WHERE precio > 5000);
+
+
+############### RETO 2 #################
+# ¿Cuál es el nombre de los empleados que realizaron cada venta?
+SELECT id_venta, nombre, apellido_paterno, apellido_materno 
+FROM venta AS v JOIN empleado AS e 
+ON e.id_empleado = v.id_empleado
+ORDER BY id_venta;
+
+# ¿Cuál es el nombre de los artículos que se han vendido?
+SELECT id_venta, nombre
+FROM venta AS v JOIN articulo AS a
+ON v.id_articulo = a.id_articulo
+ORDER BY id_venta;
+
+# ¿Cuál es el total de cada venta?
+SELECT clave, round(sum(precio), 2) AS total
+FROM venta AS v JOIN articulo AS a
+ON v.id_articulo = a.id_articulo
+GROUP BY clave
+ORDER BY clave;
+
+
+############### RETO 3 #################
+# Obtener el puesto de un empleado.
+CREATE VIEW puestos151 AS
+SELECT e.apellido_paterno, e.apellido_materno, e.nombre, p.nombre AS nombre_puesto
+FROM empleado AS e JOIN puesto AS p
+ON e.id_puesto = p.id_puesto
+ORDER BY e.apellido_paterno;
+
+# Saber qué artículos ha vendido cada empleado.
+CREATE VIEW empleado_articulo151 AS
+SELECT id_venta, e.apellido_paterno, e.apellido_materno, e.nombre, a.nombre AS Artículo
+FROM venta AS v JOIN empleado AS e
+ON v.id_empleado = e.id_empleado
+JOIN articulo AS a
+ON v.id_articulo = a.id_articulo
+ORDER BY id_venta;
+
+# Saber qué puesto ha tenido más ventas.
+CREATE VIEW puesto_ventas151 AS
+SELECT p.nombre, count(v.id_venta) AS num_ventas
+FROM venta AS v JOIN empleado AS e
+ON v.id_empleado = e.id_empleado
+JOIN puesto AS p
+ON e.id_puesto = p.id_puesto
+GROUP BY p.nombre
+ORDER BY num_ventas DESC;
+
+
+
+
+
+################# EJERCICIOS ###################
+USE classicmodels;
+
+##### Para estas consultas usa RIGHT JOIN
+
+#1) Obten el código de producto, nombre de producto y descripción de todos los productos.
+SELECT productCode, productName, productDescription FROM products;
+
+#2) Obten el número de orden, estado y costo total de cada orden.
+SELECT o.orderNumber, o.status, sum(od.quantityOrdered * od.priceEach) AS costo_total
+FROM orderdetails AS od RIGHT JOIN orders AS o
+ON od.orderNumber = o.orderNumber
+GROUP BY orderNumber;
+
+#3) Obten el número de orden, fecha de orden, línea de orden, nombre del producto, cantidad ordenada y precio de cada pieza que muestre los detalles de cada orden.
+SELECT od.orderNumber, o.orderDate, od.orderLineNumber, p.productName, od.quantityOrdered, od.priceEach
+FROM orders AS o RIGHT JOIN orderdetails AS od
+ON od.orderNumber = o.orderNumber
+JOIN products AS p
+ON p.productCode = od.productCode
+ORDER BY orderNumber;
+
+#4) Obtén el número de orden, nombre del producto, el precio sugerido de fábrica (msrp) y precio de cada pieza.
+SELECT od.orderNumber, p.productName, p.MSRP, p.buyPrice
+FROM orderdetails AS od RIGHT JOIN products AS p
+ON od.productCode = p.productCode;
+
+##### Para estas consultas usa LEFT JOIN
+
+#5) Obtén el número de cliente, nombre de cliente, número de orden y estado de cada cliente.
+SELECT c.customerNumber, c.customerName, o.orderNumber, c.state
+FROM customers AS c LEFT JOIN orders AS o
+ON c.customerNumber = o.customerNumber;
+
+#6) Obtén los clientes que no tienen una orden asociada.
+SELECT c.customerNumber, c.customerName, o.orderNumber
+FROM customers AS c LEFT JOIN orders AS o
+ON o.orderNumber = 'null'
+ORDER BY c.customerName;
+
+#7) Obtén el apellido de empleado, nombre de empleado, nombre de cliente, número de cheque y total, es decir, los clientes asociados a cada empleado.
+SELECT e.lastName AS apellido_empleado , e.firstName AS nombre_empleado, c.customerName, pay.checkNumber, pay.amount
+FROM employees AS e LEFT JOIN customers AS c
+ON c.salesRepEmployeeNumber = e.employeeNumber
+LEFT JOIN payments AS pay
+ON c.customerNumber = pay.customerNumber
+ORDER BY apellido_empleado;
+
+##### Para estas consultas usa RIGHT JOIN
+
+#8) Repite los ejercicios 5 a 7 usando RIGHT JOIN.
+#5) 
+SELECT c.customerNumber, c.customerName, o.orderNumber, c.state
+FROM orders AS o RIGHT JOIN customers AS c 
+ON c.customerNumber = o.customerNumber;
+
+#6) 
+SELECT c.customerNumber, c.customerName, o.orderNumber
+FROM orders AS o RIGHT JOIN customers AS c
+ON o.orderNumber = 'null'
+ORDER BY c.customerName;
+
+#7)
+SELECT e.lastName AS apellido_empleado , e.firstName AS nombre_empleado, c.customerName, pay.checkNumber, pay.amount
+FROM payments AS pay RIGHT JOIN customers AS c 
+ON pay.customerNumber = c.customerNumber
+RIGHT JOIN employees AS e 
+ON  c.salesRepEmployeeNumber = e.employeeNumber
+ORDER BY apellido_empleado;
+
+#9) Escoge 3 consultas de los ejercicios anteriores, crea una vista y escribe una consulta para cada una.
+CREATE VIEW clientesXempleado151 AS
+(SELECT e.lastName AS apellido_empleado , e.firstName AS nombre_empleado, c.customerName, pay.checkNumber, pay.amount
+FROM payments AS pay RIGHT JOIN customers AS c 
+ON pay.customerNumber = c.customerNumber
+RIGHT JOIN employees AS e 
+ON  c.salesRepEmployeeNumber = e.employeeNumber
+ORDER BY apellido_empleado);
+
+SELECT * FROM clientesXempleado151;
+
+CREATE VIEW clientesSINorden151 AS
+(SELECT c.customerNumber, c.customerName, o.orderNumber
+FROM orders AS o RIGHT JOIN customers AS c
+ON o.orderNumber = 'null'
+ORDER BY c.customerName);
+
+SELECT * FROM clientesSINorden151;
+
+CREATE VIEW costoOrden151 AS
+(SELECT o.orderNumber, o.status, sum(od.quantityOrdered * od.priceEach) AS costo_total
+FROM orderdetails AS od RIGHT JOIN orders AS o
+ON od.orderNumber = o.orderNumber
+GROUP BY orderNumber);
+
+SELECT * FROM costoOrden151;
