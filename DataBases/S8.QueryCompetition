@@ -1,0 +1,126 @@
+// Reto 1 
+// Encuenta el Starbucks más cercano a tu posición.
+[{$match: {
+  Longitude: {
+    $ne: NaN
+  }
+}}, {$addFields: {
+  MiLongitud: -99.18,
+  MiLatitud: 18.88
+}}, {$addFields: {
+  Distancia: {
+    $sqrt: {
+      $add: [
+        {
+          $pow: [
+            {
+              $subtract: [
+                '$Longitude',
+                '$MiLongitud'
+              ]
+            },
+            2
+          ]
+        },
+        {
+          $pow: [
+            {
+              $subtract: [
+                '$Latitude',
+                '$MiLatitud'
+              ]
+            },
+            2
+          ]
+        }
+      ]
+    }
+  }
+}}, {$sort: {
+  Distancia: 1
+}}, {$project: {
+  _id: 0,
+  'Store Name': 1,
+  'Street Address': 1,
+  City: 1,
+  'State/Province': 1,
+  Distancia: 1
+}}]
+
+
+
+//Reto 2
+//Código general
+[
+    {
+        '$group': {
+            '_id': '$Country', 
+            'Muertes_totales': {
+                '$sum': '$Deaths' (ó '$Cases')
+            }
+        }
+    }, {
+        '$sort': {
+            'Muertes_totales': -1 (ó 1)
+        }
+    }, {
+        '$limit': 6
+    }
+]
+
+//¿Cuál fue el país con mayor número de muertes? 
+//Mexico - 2271
+
+//¿Cuál fue el país con menor número de muertes? 
+//Varios tienen 0 muertes
+
+//¿Cuál fue el país con el mayor número de casos? 
+//United States - 340804 
+
+//¿Cuál fue el país con el menor número de casos? 
+//Múltiples países presentan al menos 1 caso
+
+//¿Cuál fue el número de muertes promedio?
+//MuertesTotales/Países 3774/152 = 24.82
+//¿Cuál fue el número de casos promedio?
+//CasosTotales/Países 785800/152 = 5169.73
+
+//Top 5 de países con más muertes
+//País:"Mexico" Muertes_totales:2271
+//País:"United States of America" Muertes_totales:1150
+//País:"Canada" Muertes_totales:194
+//País:"Argentina" Muertes_totales:175
+//País:"Chile" Muertes_totales:76
+
+//Top 5 de países con menos muertes
+//País:"Japan" Muertes_totales:0
+//País:"Guyana" Muertes_totales:0
+//País:"Iran, Islamic Republic" Muertes_totales:0
+//País:"Cayman Islands, UKOT" Muertes_totales:0
+//País:"Switzerland" Muertes_totales:0
+
+
+
+//Reto 3
+
+//Códigos combinados de Reto 1 y Reto 2
+
+//¿Cuál es país con mayor número de casos?
+//Mainland China: 2369152
+
+//¿Cuál es el país con mayor número de muertes?
+//Mainland China: 65325
+
+//Usando las coordenadas, encuentra el epicentro del virus.
+//Promediando las coordenadas por Region:
+// Lat:33.40693548387097  Long:111.54290322580646
+// Maps: Tianbaozhai, Xixia County, Nanyang, China
+
+//Usando el epicentro, encuentra las 5 regiones más cercanas a dicho epicentro
+//Utilizando la consulta del Starbucks...
+// Region:"Macau" Lat:22.16 Long:113.55
+// Region:"Hong Kong" Lat:22.3 Long:114.2
+// Region:"Taiwan" Lat:23.7 Long:121
+// Region:"South Korea" Lat:36 Long:128
+// Region:"Vietnam" Lat:16 Long:108
+
