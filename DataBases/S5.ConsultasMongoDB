@@ -1,0 +1,131 @@
+// Ejemplo 1 (Expresiones Regulares)
+
+{transit: /Metro/}
+
+//Ignorar las mayúsculas y minúsculas agregando el modificador i.
+{transit: /Metro/i}
+
+//Inicio con m, se usa el símbolo ^.
+{email: /^m/}
+
+//Dominio @cats.com, el símbolo $ marca el fin de una cadena.
+{email: /@cats.com$/}
+
+//Incluir una 'a' en cualquier, usar la expresión '.*' que se sustituye por cualquier cadena.
+{email: /.*a.*/}
+
+
+// Ejemplo 2
+
+//Acceder a los atributos de un determinado objeto.
+//Es importante observar que para usar la notación punto debemos colocar el nombre de los campos entre comillas dobles
+{"address.country": "Spain"}
+
+//Función $in permite filtrar mediante los elementos contenidos en el arreglo
+{amenities: {$in: ["Kitchen"]}}
+
+{
+ filter: {
+  'address.country_code': 'ES',
+  'review_scores.review_scores_rating': {
+   $gte: 50
+  },
+  $and: [
+   {
+    amenities: {
+     $in: [
+      'Wifi',
+      'Internet'
+     ]
+    }
+   },
+   {
+    amenities: {
+     $in: [
+      'Elevator'
+     ]
+    }
+   }
+  ],
+  price: {
+   $lte: 100
+  }
+ }
+}
+
+
+// Ejemplo 3
+
+// '$addFields' agrega campos como resultado de aplicar funciones a otros campos de la colección.
+// '$size' 		tamaño del arreglo
+// '$project'	proyectar sólo los resultados deseados
+// '$sort'		ordenar valores (1 ascendente, -1 descendiente)
+// '$limit'		limitar la consulta a N registros
+
+
+
+// Reto 1
+
+//Propiedades que no permitan fiestas.
+{house_rules: /No Parties/i}
+
+//Propiedades que admitan mascotas.
+{house_rules: /Pets Allowed/i}
+
+//Propiedades que no permitan fumadores.
+{house_rules: /No Smoking/i}
+
+//Propiedades que no permitan fiestas ni fumadores.
+{house_rules: /No Smoking|No Parties/i}
+
+
+// Reto 2
+
+//Tener 50 o más comentarios, valoración mayor o igual a 80, conexión a Internet vía cable y ubicada en Brazil.
+{
+ filter: {
+  number_of_reviews: {
+   $gte: 50
+  },
+  'review_scores.review_scores_rating': {
+   $gte: 80
+  },
+  amenities: {
+   $in: [
+    RegExp('Ethernet')
+   ]
+  },
+  'address.country': 'Brazil'
+ }
+}
+
+
+// Reto 3
+//Número de publicaciones que tienen conexión a Internet, sea desde Wifi o desde cable (Ethernet).
+
+// '$match'		permite realizar filtros dentro de agregaciones.
+// '$group'		los agrupamientos necesitan un campo por el cual agrupar y una función de agrupamiento.
+// '$sum'		con el parámetro 1, por cada documento sumará un 1, trayendo al final el total de documentos.
+// '$count'		devuelve el número de documentos que la etapa ha recibido como input.
+
+
+
+// Ejercicios
+
+//Publicaciones con 50 o más comentarios, valoración mayor o igual a 80, conexión a Internet vía cable y ubicadas en Brazil.
+{
+ filter: {
+  number_of_reviews: {
+   $gte: 50
+  },
+  'review_scores.review_scores_rating': {
+   $gte: 80
+  },
+  amenities: {
+   $in: [
+    RegExp('Ethernet')
+   ]
+  },
+  'address.country': 'Brazil'
+ }
+}
