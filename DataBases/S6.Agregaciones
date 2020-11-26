@@ -1,0 +1,210 @@
+// Ejemplo 1 - Agrupamientos
+
+//Costo promedio de una habitación de tipo casa
+[
+  {
+    '$match': {
+      'property_type': 'House', 
+      'bedrooms': {
+        '$gte': 1
+      }
+    }
+  }, {
+    '$addFields': {
+      'costo_recamara': {
+        '$divide': [
+          '$price', '$bedrooms'
+        ]
+      }
+    }
+  }, {
+    '$group': {
+      '_id': null, 
+      'recamaras': {
+        '$sum': 1
+      }, 
+      'total': {
+        '$sum': '$costo_recamara'
+      }
+    }
+  }, {
+    '$addFields': {
+      'costo_promedio': {
+        '$divide': [
+          '$total', '$recamaras'
+        ]
+      }
+    }
+  }
+]
+
+// Ejemplo 2 - Asociación de colecciones
+
+[
+    {
+        '$lookup': {
+            'from': 'movies', 
+            'localField': 'movie_id', 
+            'foreignField': '_id', 
+            'as': 'pelicula'
+        }
+    }, {
+        '$addFields': {
+            'pelicula_objeto': {
+                '$arrayElemAt': [
+                    '$pelicula', 0
+                ]
+            }
+        }
+    }, {
+        '$addFields': {
+            'pelicula_nombre': '$pelicula_objeto.title'
+        }
+    }, {
+        '$project': {
+            '_id': 0, 
+            'pelicula_nombre': 1, 
+            'name': 1, 
+            'text': 1
+        }
+    }
+]
+
+// Ejemplo 3 - Generación de vistas
+
+//Para crear una vista, damos clic en el botón SAVE.
+//Posteriormente damos un nombre a la vista y presionamos el botón GUARDAR.
+//En el menú izquierdo, aparece nuestra vista creada.
+//Si la abrimos, podemos notar que la consulta se realiza como a cualquier otra colección.
+
+
+// Reto 1 - Agrupamientos
+// Con base en el ejemplo 1, modifica el agrupamiento para que muestre el costo promedio por habitación por país de las propiedades de tipo casa.
+
+[
+    {
+        '$match': {
+            'property_type': 'House', 
+            'bedrooms': {
+                '$gte': 1
+            }
+        }
+    }, {
+        '$addFields': {
+            'costo_recamara': {
+                '$divide': [
+                    '$price', '$bedrooms'
+                ]
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$address.country', 
+            'recamaras': {
+                '$sum': 1
+            }, 
+            'total': {
+                '$sum': '$costo_recamara'
+            }
+        }
+    }, {
+        '$addFields': {
+            'país': '$_id', 
+            'costo_promedio': {
+                '$divide': [
+                    '$total', '$recamaras'
+                ]
+            }
+        }
+    }, {
+        '$project': {
+            '_id': 0, 
+            'país': 1, 
+            'costo_promedio': 1
+        }
+    }, {
+        '$sort': {
+            'costo_promedio': -1
+        }
+    }
+]
+
+// Reto 2 - Asociación de colecciones
+// Usando las colecciones comments y users, se requiere conocer el correo y contraseña de cada persona que realizó un comentario.
+[
+    {
+        '$lookup': {
+            'from': 'users', 
+            'localField': 'name', 
+            'foreignField': 'name', 
+            'as': 'User'
+        }
+    }, {
+        '$addFields': {
+            'user_object': {
+                '$arrayElemAt': [
+                    '$User', 0
+                ]
+            }
+        }
+    }, {
+        '$addFields': {
+            'password': '$user_object.password'
+        }
+    }, {
+        '$project': {
+            '_id': 0, 
+            'name': 1, 
+            'email': 1, 
+            'password': 1
+        }
+    }
+]
+
+
+
+// Ejercicios 
+// Obtener, por país, el número de películas que hay de cada género
+
+[
+    {
+        '$addFields': {
+            'pais': {
+                '$arrayElemAt': [
+                    '$countries', 0
+                ]
+            }, 
+            'genero': {
+                '$arrayElemAt': [
+                    '$genres', 0
+                ]
+            }
+        }
+    }, {
+        '$group': {
+            '_id': {
+                'Pais': '$pais', 
+                'Genero': '$genero'
+            }, 
+            'Conteo': {
+                '$sum': 1
+            }
+        }
+    }, {
+        '$addFields': {
+            'País': '$_id.Pais', 
+            'Género': '$_id.Genero'
+        }
+    }, {
+        '$project': {
+            '_id': 0, 
+            'País': 1, 
+            'Género': 1, 
+            'Conteo': 1
+        }
+    }, {
+        '$sort': {
+            'Conteo': -1
+        }
+    }
+]
