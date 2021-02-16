@@ -34,24 +34,11 @@ Con una base de datos obtenida de internet pudimos comparar los orígines y dest
 Contenido
 
 1. Bases de datos
-- Tarifas
-- Viajes
 
 2. Extracción de datos
-- Reverse geocoding
 
 3. Limpieza de datos
-- Eliminación de outlayers
 
 4. Exploración de datos
 
-- Heat maps
-- Tarifas y Costos Finales
-- Origenes y destinos viajes
-- Análisis de Distancias, Tiempos de espera en el trafico y Velocidad
-- Análisis de Viajes y Tráfico
-
 5. Análisis estadistico 
-- Reducción tiempo detenido por días
-- Análisis de Distancias, Tiempos de espera en el trafico y Velocidad
-- Prueba de Hipotesis - Costos (UberX - TaxiLibre)
