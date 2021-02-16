@@ -8,7 +8,7 @@ En este módulo se realizaron tareas de limpieza, manipulación y análisis de b
 
 Como resultado de este modulo se crean otros 2 repositorios para el almacenamiento y evidencia del trabajo realizado. Ambos fueron realizados de manera colaborativa con los demás integrantes del equipo 12.
 
-#### Postworks:
+### Postworks:
 - [BEDU-DS-Estadistica-con-R](https://github.com/CristopherCano/BEDU-DS-Estadistica-con-R)
 
 Durante cada sesión, el *experto BEDU* nos muestra ejemplos del tema que se está presentando y posteriormente se realizan ejercicios de práctica. Los postworks son los ejercicios que se dejan como tarea y deben ser entregados antes de la siguiente sesión. Dentro del repositorio vienen los archivos de R, así como las bases de datos necesarias para su correcto funcionamiento y una explicación de cada código.
@@ -25,7 +25,7 @@ Contenido:
 - Postwork Sesión 8: Dashboards con Shiny - Entorno GUI
 
 
-#### Proyecto:
+### Proyecto:
 - [Proyecto_R_Transporte_CDMX](https://github.com/CristopherCano/Proyecto_R_Transporte_CDMX)
 
 Como actividad final se realizó un proyecto en equipo donde se ocupara lo aprendido durante el módulo. Por nuestra parte, el equipo 12, lo hicimos relacionado al tema de movilidad en la CDMX, enfocada a los servicios de Taxi y Uber. 
