@@ -4,7 +4,7 @@
 
 <img src="https://download.pingcap.com/images/blog/choosing-right-database-for-your-applications.png" alt="Bases de Datos" width="550px" height="250px">
 
-En este móudlo se conocieron los principales conceptos que ahondan las bases de datos y se pusieron en práctica mediante la generación de consultas a través de sistemas de gestores de bases de datos relaciones y no relacionales, entre ellos *SQL* y *MongoDB*.
+En este módulo se conocieron los principales conceptos que ahondan las bases de datos y se pusieron en práctica mediante la generación de consultas a través de sistemas de gestores de bases de datos relaciones y no relacionales, entre ellos *SQL* y *MongoDB*.
 
 Cada archivo alojado aquí corresponde a una sesión del módulo; en ellos se encuentran los ejemplos, retos y ejercicios (postwork) de cada sesión. 
 
