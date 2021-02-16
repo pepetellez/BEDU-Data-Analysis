@@ -31,14 +31,10 @@ Contenido:
 Como actividad final se realizó un proyecto en equipo donde se ocupara lo aprendido durante el módulo. Por nuestra parte, el equipo 12, lo hicimos relacionado al tema de movilidad en la CDMX, enfocada a los servicios de Taxi y Uber. 
 Con una base de datos obtenida de internet pudimos comparar los orígines y destinos, tiempo de duración, velocidad promedio y costos finales de los viajes según el tipo de trasnporte. 
 
-Contenido
+Contenido:
 
-1. Bases de datos
-
-2. Extracción de datos
-
-3. Limpieza de datos
-
-4. Exploración de datos
-
-5. Análisis estadistico 
+- Bases de datos
+- Extracción de datos
+- Limpieza de datos
+- Exploración de datos
+- Análisis estadistico 
